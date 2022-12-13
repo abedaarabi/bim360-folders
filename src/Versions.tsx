@@ -18,9 +18,8 @@ import ArrowRightIcon from "@mui/icons-material/ArrowRight";
 import { SvgIconProps } from "@mui/material/SvgIcon";
 import { data } from "./data";
 import { EditAttributes } from "@mui/icons-material";
-import { getFolderContents, transformData } from "./helper";
+import { getFolderContents, getversions, transformData } from "./helper";
 import { useQuery, useMutation, useQueryClient } from "react-query";
-import Versions from "./Versions";
 
 declare module "react" {
   interface CSSProperties {
@@ -103,11 +102,14 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   );
 }
 
-export default function FolderContent({ id }: any) {
-  const [version, setVersin] = React.useState(null);
+export default function Versions({ id }: any) {
+  //   const [fId, setFid] = React.useState(id);
+
+  console.log(id, "com");
+
   const { data, isLoading } = useQuery(
     ["FolderContents", id],
-    getFolderContents
+    getversions
   ) as any;
 
   return (
@@ -124,19 +126,12 @@ export default function FolderContent({ id }: any) {
           <StyledTreeItem
             key={i.id}
             onClick={() => {
-              if (i.type === "items") {
-                setVersin(i.id);
-                console.log(i.id, "lunch viewer");
-              }
+              console.log(i.id, "version");
             }}
             nodeId={i.id}
-            labelText={i.name || ""}
-            labelIcon={i.type === "folders" ? FolderIcon : ArticleIcon}
-          >
-            <FolderContent id={i.id} />
-
-            {version && <Versions id={version} />}
-          </StyledTreeItem>
+            labelText={i.createTime || ""}
+            labelIcon={MailIcon}
+          ></StyledTreeItem>
         ))}
     </TreeView>
   );
