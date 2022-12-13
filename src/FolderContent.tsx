@@ -3,6 +3,8 @@ import { styled } from "@mui/material/styles";
 import FolderIcon from "@mui/icons-material/Folder";
 import Box from "@mui/material/Box";
 import TreeView from "@mui/lab/TreeView";
+import CircularProgress from "@mui/material/CircularProgress";
+
 import ArticleIcon from "@mui/icons-material/Article";
 import TreeItem, { TreeItemProps, treeItemClasses } from "@mui/lab/TreeItem";
 import Typography from "@mui/material/Typography";
@@ -38,7 +40,7 @@ type StyledTreeItemProps = TreeItemProps & {
 };
 
 const StyledTreeItemRoot = styled(TreeItem)(({ theme }) => ({
-  color: theme.palette.text.secondary,
+  color: theme.palette.mode,
   [`& .${treeItemClasses.content}`]: {
     color: theme.palette.text.secondary,
     borderTopRightRadius: theme.spacing(2),
@@ -84,7 +86,7 @@ function StyledTreeItem(props: StyledTreeItemProps) {
         <Box sx={{ display: "flex", alignItems: "center", p: 0.5, pr: 0 }}>
           <Box component={LabelIcon} color="inherit" sx={{ mr: 1 }} />
           <Typography
-            variant="body2"
+            variant="subtitle1"
             sx={{ fontWeight: "inherit", flexGrow: 1 }}
           >
             {labelText}
@@ -103,10 +105,9 @@ function StyledTreeItem(props: StyledTreeItemProps) {
   );
 }
 
-export default function FolderContent({ id }: any) {
-  const [version, setVersin] = React.useState(null);
+export default function FolderContent({ id, type }: any) {
   const { data, isLoading } = useQuery(
-    ["FolderContents", id],
+    ["FolderContents", id, type],
     getFolderContents
   ) as any;
 
@@ -114,30 +115,36 @@ export default function FolderContent({ id }: any) {
     <TreeView
       aria-label="forge"
       defaultExpanded={["3"]}
-      defaultCollapseIcon={<ArrowDropDownIcon />}
+      defaultCollapseIcon={<ArrowDropDownIcon color="info" />}
       defaultExpandIcon={<ArrowRightIcon />}
-      defaultEndIcon={<div style={{ width: 24 }} />}
-      sx={{ height: "auto", flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
+      defaultEndIcon={<div style={{ width: 54 }} />}
+      // sx={{
+      //   width: "auto",
+      // }}
+      sx={{ maxWidth: 600 }}
     >
-      {!isLoading &&
+      {isLoading ? (
+        <CircularProgress size={28} />
+      ) : (
         transformData(data).map((i: any) => (
           <StyledTreeItem
+            sx={{ pl: 2, pt: 0.8 }}
             key={i.id}
             onClick={() => {
               if (i.type === "items") {
-                setVersin(i.id);
-                console.log(i.id, "lunch viewer");
+                // setVersion(i.id);
+                console.log(i, "lunch viewer");
               }
             }}
             nodeId={i.id}
             labelText={i.name || ""}
             labelIcon={i.type === "folders" ? FolderIcon : ArticleIcon}
           >
-            <FolderContent id={i.id} />
-
-            {version && <Versions id={version} />}
+            <FolderContent {...i} />
+            {i.type === "items" && <Versions id={i.id} />}
           </StyledTreeItem>
-        ))}
+        ))
+      )}
     </TreeView>
   );
 }

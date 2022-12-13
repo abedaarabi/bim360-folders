@@ -1,12 +1,12 @@
 import React from "react";
 
 import "./App.css";
-import Folders from "./Folders";
+import FolderContent from "./FolderContent";
 
 function App() {
   return (
-    <div className="App">
-      <Folders />
+    <div style={{ marginLeft: "30px", marginTop: 20 }}>
+      <FolderContent />
     </div>
   );
 }

@@ -20,6 +20,8 @@ import { data } from "./data";
 import { EditAttributes } from "@mui/icons-material";
 import { getFolderContents, getversions, transformData } from "./helper";
 import { useQuery, useMutation, useQueryClient } from "react-query";
+import AccessTimeIcon from "@mui/icons-material/AccessTime";
+import { CircularProgress } from "@mui/material";
 
 declare module "react" {
   interface CSSProperties {
@@ -103,10 +105,6 @@ function StyledTreeItem(props: StyledTreeItemProps) {
 }
 
 export default function Versions({ id }: any) {
-  //   const [fId, setFid] = React.useState(id);
-
-  console.log(id, "com");
-
   const { data, isLoading } = useQuery(
     ["FolderContents", id],
     getversions
@@ -116,23 +114,27 @@ export default function Versions({ id }: any) {
     <TreeView
       aria-label="forge"
       defaultExpanded={["3"]}
-      defaultCollapseIcon={<ArrowDropDownIcon />}
+      defaultCollapseIcon={<ArrowDropDownIcon color="info" />}
       defaultExpandIcon={<ArrowRightIcon />}
       defaultEndIcon={<div style={{ width: 24 }} />}
-      sx={{ height: "auto", flexGrow: 1, maxWidth: 400, overflowY: "auto" }}
     >
-      {!isLoading &&
-        transformData(data).map((i: any) => (
+      {isLoading ? (
+        <CircularProgress size={28} />
+      ) : (
+        data.map((i: any) => (
           <StyledTreeItem
+            sx={{ pl: 2, pt: 0.8 }}
             key={i.id}
             onClick={() => {
-              console.log(i.id, "version");
+              console.log(i.id, "Lunch viewer");
             }}
             nodeId={i.id}
-            labelText={i.createTime || ""}
-            labelIcon={MailIcon}
+            labelText={i.attributes.createTime || ""}
+            labelIcon={AccessTimeIcon}
+            color="#d1495b"
           ></StyledTreeItem>
-        ))}
+        ))
+      )}
     </TreeView>
   );
 }
